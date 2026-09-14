@@ -59,10 +59,10 @@ import {
 } from "@/components/clientes/ClientePerfilTributarioForm";
 import { ClienteDatosSifenReceptorForm } from "@/components/clientes/ClienteDatosSifenReceptorForm";
 
-// ── Campos ocultados a pedido del negocio (Instemaq) ────────────────────────────
-// Se ocultan de la interfaz sin borrar lógica ni datos. true = reactivar.
-const MOSTRAR_SIFEN_CLIENTE = false;
-const MOSTRAR_PERFIL_TRIBUTARIO_CLIENTE = false;
+// ── Datos secundarios reactivados para FLUX Nutrition ──────────────────────────
+// Instemaq los ocultaba porque no aplicaban a su negocio; FLUX si los usa.
+const MOSTRAR_SIFEN_CLIENTE = true;
+const MOSTRAR_PERFIL_TRIBUTARIO_CLIENTE = true;
 
 // ── Estilos ────────────────────────────────────────────────────────────────────
 

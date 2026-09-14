@@ -382,12 +382,12 @@ function NuevoClienteForm() {
     router.push(`/clientes/${clienteId}`);
   }
 
-  // ── Campos ocultados a pedido del negocio (Instemaq) ────────────────────────
-  // Se ocultan de la interfaz sin borrar la lógica: los estados conservan sus
-  // valores por defecto y el alta sigue funcionando. Poner en `true` para reactivar.
-  const MOSTRAR_TIPO_SERVICIO = false;
-  const MOSTRAR_DATOS_COMERCIALES = false;
-  const MOSTRAR_PERFIL_TRIBUTARIO = false;
+  // ── Datos secundarios reactivados para FLUX Nutrition ───────────────────────
+  // Instemaq los ocultaba porque no aplicaban a su negocio; FLUX si los usa
+  // (segmentacion por tipo de servicio, condiciones comerciales, perfil tributario).
+  const MOSTRAR_TIPO_SERVICIO = true;
+  const MOSTRAR_DATOS_COMERCIALES = true;
+  const MOSTRAR_PERFIL_TRIBUTARIO = true;
 
   return (
     <div className="space-y-8">

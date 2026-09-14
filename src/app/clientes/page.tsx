@@ -457,34 +457,9 @@ export default function ClientesPage() {
             { value: "persona", label: "Persona" },
           ]}
         />
-        <FancySelect
-          value={filtroOrigen}
-          onChange={(v) => setFiltroOrigen(v as "" | "CRM" | "VENTA" | "MANUAL")}
-          ariaLabel="Filtrar por origen"
-          className="w-44"
-          size="sm"
-          options={[
-            { value: "", label: "Todos los orígenes" },
-            { value: "CRM", label: "CRM" },
-            { value: "VENTA", label: "Venta" },
-            { value: "MANUAL", label: "Manual" },
-          ]}
-        />
-        <FancySelect
-          value={filtroTipoServicio}
-          onChange={(v) => setFiltroTipoServicio(v)}
-          ariaLabel="Filtrar por tipo de servicio"
-          className="w-44"
-          size="sm"
-          options={[
-            { value: "", label: "Tipo servicio" },
-            ...filasTipoCatalogo.map((t) => ({ value: t.slug, label: t.nombre })),
-            ...slugsExtraFiltro.map((slug) => ({
-              value: slug,
-              label: etiquetaVisibleTipoServicio(slug, mapNombreTipo),
-            })),
-          ]}
-        />
+        {/* Filtros "Todos los orígenes" y "Tipo servicio" ocultos en FLUX
+            Nutrition (pedido del negocio). El estado sigue vivo por si se
+            reactivan; los defaults ("" en ambos) hacen que no filtren nada. */}
         {hayFiltros && (
           <button
             onClick={() => { setBusqueda(""); setFiltroEstado(""); setFiltroOrigen(""); setFiltroTipo(""); setFiltroTipoServicio(""); }}
