@@ -20,6 +20,7 @@ import {
 import { getProspecto, updateProspecto } from "@/lib/crm/storage";
 import { getUsuariosActivosEmpresa, type UsuarioEmpresa } from "@/lib/usuarios/empresa";
 import MontoInput from "@/components/ui/MontoInput";
+import { FancySelect } from "@/components/ui/FancySelect";
 import { getPlanes } from "@/lib/planes/storage";
 import type { Cliente, TipoCliente, OrigenCliente } from "@/lib/clientes/types";
 import type { ClienteTipoServicioRow } from "@/lib/clientes/tipo-servicio-catalogo";
@@ -620,47 +621,47 @@ function NuevoClienteForm() {
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className={labelClass}>Condición de pago</label>
-                <select
-                  name="condicion_pago"
-                  value={form.condicion_pago}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option value="CONTADO">Contado</option>
-                  <option value="15 DÍAS">15 días</option>
-                  <option value="30 DÍAS">30 días</option>
-                  <option value="60 DÍAS">60 días</option>
-                  <option value="90 DÍAS">90 días</option>
-                  <option value="MENSUAL">Mensual</option>
-                </select>
+                <FancySelect
+                  value={form.condicion_pago ?? "CONTADO"}
+                  onChange={(v) => setForm((prev) => ({ ...prev, condicion_pago: v }))}
+                  ariaLabel="Condición de pago"
+                  options={[
+                    { value: "CONTADO", label: "Contado" },
+                    { value: "15 DÍAS", label: "15 días" },
+                    { value: "30 DÍAS", label: "30 días" },
+                    { value: "60 DÍAS", label: "60 días" },
+                    { value: "90 DÍAS", label: "90 días" },
+                    { value: "MENSUAL", label: "Mensual" },
+                  ]}
+                />
               </div>
               <div>
                 <label className={labelClass}>Moneda preferida</label>
-                <select
-                  name="moneda_preferida"
-                  value={form.moneda_preferida}
-                  onChange={(e) => setForm((prev) => ({ ...prev, moneda_preferida: e.target.value as "GS" | "USD" }))}
-                  className={inputClass}
-                >
-                  <option value="GS">Guaraníes (GS)</option>
-                  <option value="USD">Dólares (USD)</option>
-                </select>
+                <FancySelect
+                  value={form.moneda_preferida ?? "GS"}
+                  onChange={(v) => setForm((prev) => ({ ...prev, moneda_preferida: v as "GS" | "USD" }))}
+                  ariaLabel="Moneda preferida"
+                  options={[
+                    { value: "GS", label: "Guaraníes (GS)" },
+                    { value: "USD", label: "Dólares (USD)" },
+                  ]}
+                />
               </div>
               <div>
                 <label className={labelClass}>Vendedor responsable (usuario ERP)</label>
-                <select
-                  name="vendedor_usuario_id"
-                  value={form.vendedor_usuario_id}
-                  onChange={(e) => setForm((prev) => ({ ...prev, vendedor_usuario_id: e.target.value }))}
-                  className={inputClass}
-                >
-                  <option value="">— Sin asignar —</option>
-                  {usuariosEmpresa.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {(u.nombre ?? "").trim() || u.email}
-                    </option>
-                  ))}
-                </select>
+                <FancySelect
+                  value={form.vendedor_usuario_id ?? ""}
+                  onChange={(v) => setForm((prev) => ({ ...prev, vendedor_usuario_id: v }))}
+                  ariaLabel="Vendedor responsable"
+                  placeholder="— Sin asignar —"
+                  options={[
+                    { value: "", label: "— Sin asignar —" },
+                    ...usuariosEmpresa.map((u) => ({
+                      value: u.id,
+                      label: (u.nombre ?? "").trim() || u.email || "(sin nombre)",
+                    })),
+                  ]}
+                />
                 {usuariosEmpresaError ? (
                   <p className="mt-1 text-xs text-red-600">{usuariosEmpresaError}</p>
                 ) : usuariosEmpresa.length === 0 ? (
@@ -683,29 +684,29 @@ function NuevoClienteForm() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className={labelClass}>Origen del cliente</label>
-                <select
-                  name="origen"
-                  value={form.origen}
-                  onChange={(e) => setForm((prev) => ({ ...prev, origen: e.target.value as OrigenCliente }))}
-                  className={inputClass}
+                <FancySelect
+                  value={form.origen ?? "MANUAL"}
+                  onChange={(v) => setForm((prev) => ({ ...prev, origen: v as OrigenCliente }))}
+                  ariaLabel="Origen del cliente"
                   disabled={!!fromCrmId}
-                >
-                  <option value="MANUAL">Manual</option>
-                  <option value="CRM">CRM</option>
-                  <option value="VENTA">Venta</option>
-                </select>
+                  options={[
+                    { value: "MANUAL", label: "Manual" },
+                    { value: "CRM", label: "CRM" },
+                    { value: "VENTA", label: "Venta" },
+                  ]}
+                />
               </div>
               <div>
                 <label className={labelClass}>Estado inicial</label>
-                <select
-                  name="estado"
-                  value={form.estado}
-                  onChange={(e) => setForm((prev) => ({ ...prev, estado: e.target.value as "activo" | "inactivo" }))}
-                  className={inputClass}
-                >
-                  <option value="activo">Activo</option>
-                  <option value="inactivo">Inactivo</option>
-                </select>
+                <FancySelect
+                  value={form.estado ?? "activo"}
+                  onChange={(v) => setForm((prev) => ({ ...prev, estado: v as "activo" | "inactivo" }))}
+                  ariaLabel="Estado inicial"
+                  options={[
+                    { value: "activo", label: "Activo" },
+                    { value: "inactivo", label: "Inactivo" },
+                  ]}
+                />
               </div>
             </div>
 

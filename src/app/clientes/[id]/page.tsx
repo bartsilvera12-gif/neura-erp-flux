@@ -32,6 +32,7 @@ import { fetchWithSupabaseSession } from "@/lib/api/fetch-with-supabase-session"
 import { SifenEstadoBadge } from "@/components/sifen/SifenEstadoBadge";
 import { useFacturaSifenEstados } from "@/hooks/useFacturaSifenEstados";
 import MontoInput from "@/components/ui/MontoInput";
+import { FancySelect } from "@/components/ui/FancySelect";
 import { getPlanes } from "@/lib/planes/storage";
 import type { Cliente, NotaCliente } from "@/lib/clientes/types";
 import {
@@ -1460,23 +1461,10 @@ export default function ClienteDetailPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className={labelClass}>Tipo de servicio</label>
-                  <select
-                    name="tipo_servicio_cliente"
-                    value={form.tipo_servicio_cliente}
-                    onChange={handleChange}
-                    className={inputClass}
-                  >
-                    <option value="">— Ninguno —</option>
-                    {opcionesTipoServicio.map((f) => (
-                      <option key={f.slug} value={f.slug}>
-                        {f.nombre}
-                        {!f.activo && (form.tipo_servicio_cliente || "").trim() === f.slug ? " (inactivo)" : ""}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {/* Bloque "Tipo de servicio" (Marketing/SaaS/Branding/Web/Otro)
+                    oculto en FLUX Nutrition: no aplica al negocio. El estado
+                    tipo_servicio_cliente sigue vivo con su default; solo se
+                    saca el select del form. */}
 
                 {form.tipo_cliente === "empresa" && (
                   <div>
@@ -1659,32 +1647,33 @@ export default function ClienteDetailPage() {
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <label className={labelClass}>Condición de pago</label>
-                    <select
-                      name="condicion_pago"
-                      value={form.condicion_pago}
-                      onChange={handleChange}
-                      className={inputClass}
-                    >
-                      <option value="">—</option>
-                      <option value="CONTADO">Contado</option>
-                      <option value="15 DÍAS">15 días</option>
-                      <option value="30 DÍAS">30 días</option>
-                      <option value="60 DÍAS">60 días</option>
-                      <option value="90 DÍAS">90 días</option>
-                      <option value="MENSUAL">Mensual</option>
-                    </select>
+                    <FancySelect
+                      value={form.condicion_pago ?? ""}
+                      onChange={(v) => setForm((p) => ({ ...p, condicion_pago: v }))}
+                      ariaLabel="Condición de pago"
+                      placeholder="—"
+                      options={[
+                        { value: "", label: "—" },
+                        { value: "CONTADO", label: "Contado" },
+                        { value: "15 DÍAS", label: "15 días" },
+                        { value: "30 DÍAS", label: "30 días" },
+                        { value: "60 DÍAS", label: "60 días" },
+                        { value: "90 DÍAS", label: "90 días" },
+                        { value: "MENSUAL", label: "Mensual" },
+                      ]}
+                    />
                   </div>
                   <div>
                     <label className={labelClass}>Moneda preferida</label>
-                    <select
-                      name="moneda_preferida"
-                      value={form.moneda_preferida}
-                      onChange={(e) => setForm((p) => ({ ...p, moneda_preferida: e.target.value as "GS" | "USD" }))}
-                      className={inputClass}
-                    >
-                      <option value="GS">Guaraníes (GS)</option>
-                      <option value="USD">Dólares (USD)</option>
-                    </select>
+                    <FancySelect
+                      value={form.moneda_preferida ?? "GS"}
+                      onChange={(v) => setForm((p) => ({ ...p, moneda_preferida: v as "GS" | "USD" }))}
+                      ariaLabel="Moneda preferida"
+                      options={[
+                        { value: "GS", label: "Guaraníes (GS)" },
+                        { value: "USD", label: "Dólares (USD)" },
+                      ]}
+                    />
                   </div>
                   <div>
                     <label className={labelClass}>Valor anual estimado (Gs.)</label>
@@ -1695,19 +1684,19 @@ export default function ClienteDetailPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>Vendedor responsable (usuario ERP)</label>
-                    <select
-                      name="vendedor_usuario_id"
-                      value={form.vendedor_usuario_id}
-                      onChange={(e) => setForm((p) => ({ ...p, vendedor_usuario_id: e.target.value }))}
-                      className={inputClass}
-                    >
-                      <option value="">— Sin asignar —</option>
-                      {usuariosEmpresa.map((u) => (
-                        <option key={u.id} value={u.id}>
-                          {(u.nombre ?? "").trim() || u.email}
-                        </option>
-                      ))}
-                    </select>
+                    <FancySelect
+                      value={form.vendedor_usuario_id ?? ""}
+                      onChange={(v) => setForm((p) => ({ ...p, vendedor_usuario_id: v }))}
+                      ariaLabel="Vendedor responsable"
+                      placeholder="— Sin asignar —"
+                      options={[
+                        { value: "", label: "— Sin asignar —" },
+                        ...usuariosEmpresa.map((u) => ({
+                          value: u.id,
+                          label: (u.nombre ?? "").trim() || u.email || "(sin nombre)",
+                        })),
+                      ]}
+                    />
                     {usuariosEmpresaError ? (
                       <p className="mt-1 text-xs text-red-600">{usuariosEmpresaError}</p>
                     ) : usuariosEmpresa.length === 0 ? (
@@ -1723,15 +1712,15 @@ export default function ClienteDetailPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>Estado</label>
-                    <select
-                      name="estado"
-                      value={form.estado}
-                      onChange={(e) => setForm((p) => ({ ...p, estado: e.target.value as Cliente["estado"] }))}
-                      className={inputClass}
-                    >
-                      <option value="activo">Activo</option>
-                      <option value="inactivo">Inactivo</option>
-                    </select>
+                    <FancySelect
+                      value={form.estado ?? "activo"}
+                      onChange={(v) => setForm((p) => ({ ...p, estado: v as Cliente["estado"] }))}
+                      ariaLabel="Estado"
+                      options={[
+                        { value: "activo", label: "Activo" },
+                        { value: "inactivo", label: "Inactivo" },
+                      ]}
+                    />
                   </div>
                 </div>
 
