@@ -81,8 +81,14 @@ const MENU_STRUCTURE: MenuItem[] = [
   { key: "clientes", slug: "clientes", label: "Clientes", href: "/clientes", icon: Users },
   { key: "gestion-clientes", slug: "gestion-clientes", label: "Gestión Clientes", href: "/gestion-clientes", icon: Users },
   { key: "crm", slug: "crm", label: "CRM Funnel", href: "/crm", icon: Sparkles },
-  { key: "inventario", slug: "inventario", label: "Inventario", href: "/inventario", icon: Package },
-  { key: "movimientos", slug: "inventario", label: "Movimientos", href: "/inventario/movimientos", icon: Truck },
+  {
+    key: "inventario", slug: "inventario", label: "Inventario", href: "/inventario", icon: Package,
+    children: [
+      { label: "Productos", href: "/inventario", exactMatch: true },
+      { label: "Movimientos", href: "/inventario/movimientos" },
+      { label: "Categorías", href: "/inventario/categorias" },
+    ],
+  },
   { key: "gastos", slug: "gastos", label: "Gastos", href: "/gastos", icon: Receipt },
   { key: "cobros", slug: "cobros", label: "Cobranzas", href: "/pagos", icon: Banknote },
   { key: "pagos", slug: "pagos", label: "Pagos", href: "/proximamente?m=pagos", icon: Wallet },
@@ -104,7 +110,7 @@ const MENU_STRUCTURE: MenuItem[] = [
 const MENU_FAMILIES: { id: string; titulo: string; keys: string[] }[] = [
   { id: "inicio", titulo: "Inicio", keys: ["dashboard", "tableros", "gerencia"] },
   { id: "comercial", titulo: "Comercial", keys: ["ventas", "clientes", "gestion-clientes", "crm"] },
-  { id: "operaciones", titulo: "Operaciones", keys: ["inventario", "movimientos"] },
+  { id: "operaciones", titulo: "Operaciones", keys: ["inventario"] },
   { id: "finanzas", titulo: "Finanzas", keys: ["gastos", "cobros", "pagos", "notas_credito", "comisiones", "contabilidad"] },
   { id: "reportes", titulo: "Reportes", keys: ["reportes"] },
   { id: "omnicanal", titulo: "Omnicanal", keys: ["campanas", "conversaciones", "conversaciones-finalizadas", "historial-omnicanal"] },
