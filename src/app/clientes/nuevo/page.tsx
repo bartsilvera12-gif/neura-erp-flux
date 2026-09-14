@@ -382,10 +382,11 @@ function NuevoClienteForm() {
     router.push(`/clientes/${clienteId}`);
   }
 
-  // ── Datos secundarios reactivados para FLUX Nutrition ───────────────────────
-  // Instemaq los ocultaba porque no aplicaban a su negocio; FLUX si los usa
-  // (segmentacion por tipo de servicio, condiciones comerciales, perfil tributario).
-  const MOSTRAR_TIPO_SERVICIO = true;
+  // ── Datos secundarios FLUX Nutrition ────────────────────────────────────────
+  // Tipo de servicio (Marketing/SaaS/Branding/Web/Otro) NO aplica al negocio
+  // de FLUX. Datos comerciales y perfil tributario (contribuyente SET + RUC)
+  // sí se cargan.
+  const MOSTRAR_TIPO_SERVICIO = false;
   const MOSTRAR_DATOS_COMERCIALES = true;
   const MOSTRAR_PERFIL_TRIBUTARIO = true;
 
