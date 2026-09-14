@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -589,22 +590,24 @@ export default function Sidebar() {
             : "fixed inset-y-0 left-0 z-50 -translate-x-full lg:translate-x-0 transition-transform duration-200"
         }`}
       >
-      {/* Header FLUX Nutrition — texto puro (sin logo Zentra). Cuando se suba el
-          logo oficial de FLUX, reemplazar por un <Image src="/brand/flux-logo.png" />. */}
+      {/* Logo: dos assets distintos segun estado.
+          - Expandido: /brand/zentra-logo-official.png (logo + texto ZENTRA)
+          - Colapsado: /brand/zentralogo.png (solo icono Z) -> queda nitido en 44x44 */}
       <div className="flex h-[7.25rem] shrink-0 items-center justify-center gap-2 border-b border-[color:var(--zentra-sidebar-border)] bg-[color:var(--zentra-sidebar-elevated)]/35 px-3 py-2.5">
         <Link href="/" className="flex items-center justify-center min-w-0 flex-1 overflow-hidden">
-          {collapsed ? (
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#4FAEB2] text-xl font-black text-white shadow-md">
-              F
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center leading-tight">
-              <span className="text-lg font-black tracking-[0.18em] text-white">FLUX</span>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#4FAEB2]">
-                Nutrition
-              </span>
-            </div>
-          )}
+          <div
+            className={`relative flex items-center justify-center ${collapsed ? "h-11 w-11" : "h-[4.5rem] w-full max-w-[200px]"}`}
+          >
+            <Image
+              src={collapsed ? "/brand/zentralogo.png" : "/brand/zentra-logo-official.png"}
+              alt="ZENTRA"
+              width={400}
+              height={220}
+              sizes={collapsed ? "44px" : "200px"}
+              className="h-full w-full object-contain object-center"
+              priority
+            />
+          </div>
         </Link>
       </div>
 
