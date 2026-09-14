@@ -99,18 +99,8 @@ function wrap(t: string, f: PDFFont, size: number, max: number): string[] {
   return lines;
 }
 
-/** Logo de la instancia. Devuelve los bytes y el formato para embeberlo. */
+/** Logo de la instancia. FLUX Nutrition no incluye logo por defecto en presupuestos. */
 function logoBytes(): { bytes: Uint8Array; tipo: "png" | "jpg" } | null {
-  const candidatos: { archivo: string; tipo: "png" | "jpg" }[] = [
-    { archivo: "instemaq-logo.jpeg", tipo: "jpg" },
-    { archivo: "instemaq-logo.png", tipo: "png" },
-  ];
-  for (const c of candidatos) {
-    try {
-      const p = path.join(process.cwd(), "public", "brand", c.archivo);
-      if (fs.existsSync(p)) return { bytes: new Uint8Array(fs.readFileSync(p)), tipo: c.tipo };
-    } catch { /* probamos el siguiente */ }
-  }
   return null;
 }
 

@@ -119,12 +119,11 @@ function formatFechaEmision(iso: string | null | undefined): string {
 }
 
 /**
- * Logo por defecto del KuDE. Primero el de la instancia (Instemaq); si no está,
- * se preserva el logo Neura del bundle.
+ * Logo por defecto del KuDE. FLUX Nutrition no usa logo por defecto: si no
+ * se sube uno especifico de la empresa, se preserva el logo Neura del bundle.
  */
 function readLogoBytes(): Uint8Array | null {
   const candidatos = [
-    path.join(process.cwd(), "public", "brand", "instemaq-logo.jpeg"),
     path.join(process.cwd(), "public", "logo-neura.png"),
   ];
   for (const p of candidatos) {

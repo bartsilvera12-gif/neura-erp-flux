@@ -12,13 +12,13 @@
 import { INSTEMAQ_LOGO_DATA_URI } from "./instemaq-logo-base64";
 
 export const EMPRESA_DOC = {
-  nombre: "INSTEMAQ",
-  actividad: ["Soluciones industriales"],
+  nombre: "FLUX NUTRITION",
+  actividad: [] as string[],
   telefono: "",
   email: "",
   direccion: [] as string[],
-  /** Fallback (no debería usarse: se prefiere el data URI embebido). */
-  logoUrl: "/brand/instemaq-logo.png",
+  /** Vacío: FLUX Nutrition no usa logo por defecto en membretes impresos. */
+  logoUrl: "",
 };
 
 /** Fuente del logo para el `<img>`: data URI embebido (siempre disponible). */
@@ -47,12 +47,13 @@ export function membreteA4(origin = ""): string {
   const telHtml = e.telefono ? `<div style="margin-top:4px;"><strong>Tel:</strong> ${esc(e.telefono)}</div>` : "";
   const emailHtml = e.email ? `<div><strong>Email:</strong> ${esc(e.email)}</div>` : "";
   const dirHtml = e.direccion.length ? `<div>${e.direccion.map(esc).join(" · ")}</div>` : "";
+  const logoHtml = logo
+    ? `<div style="flex:0 0 auto;"><img src="${esc(logo)}" alt="${esc(e.nombre)}" style="max-width:240px;max-height:130px;width:auto;height:auto;object-fit:contain;display:block;" /></div>`
+    : "";
   return `
   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:18px;border-bottom:2px solid #1e3a8a;padding-bottom:12px;margin-bottom:16px;">
-    <div style="flex:0 0 auto;">
-      <img src="${esc(logo)}" alt="${esc(e.nombre)}" style="max-width:240px;max-height:130px;width:auto;height:auto;object-fit:contain;display:block;" />
-    </div>
-    <div style="flex:1;min-width:0;text-align:right;font-size:11px;color:#374151;line-height:1.55;">
+    ${logoHtml}
+    <div style="flex:1;min-width:0;text-align:${logo ? "right" : "left"};font-size:11px;color:#374151;line-height:1.55;">
       <div style="font-size:14px;font-weight:800;color:#1f2937;">${esc(e.nombre)}</div>
       ${actividadHtml}
       ${telHtml}
@@ -73,9 +74,12 @@ export function membreteTicket(origin = ""): string {
   const dirHtml = e.direccion.length
     ? e.direccion.map((d) => `<div style="font-size:10px;">${esc(d)}</div>`).join("")
     : "";
+  const logoHtml = logo
+    ? `<img src="${esc(logo)}" alt="${esc(e.nombre)}" style="max-width:210px;max-height:110px;width:auto;height:auto;object-fit:contain;display:inline-block;margin:0 auto 4px;" />`
+    : "";
   return `
   <div style="text-align:center;padding-bottom:6px;margin-bottom:6px;border-bottom:1px dashed #000;">
-    <img src="${esc(logo)}" alt="${esc(e.nombre)}" style="max-width:210px;max-height:110px;width:auto;height:auto;object-fit:contain;display:inline-block;margin:0 auto 4px;" />
+    ${logoHtml}
     <div style="font-weight:700;font-size:12px;">${esc(e.nombre)}</div>
     ${dirHtml}
     ${telHtml}
