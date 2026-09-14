@@ -291,7 +291,7 @@ export async function buildKudePdfBuffer(input: BuildKudePdfInput): Promise<Buff
 
   const pdfDoc = await PDFDocument.create();
   pdfDoc.setTitle(`KuDE — Factura ${numeroFactura}`);
-  pdfDoc.setAuthor("Instemaq ERP");
+  pdfDoc.setAuthor("FLUX Nutrition ERP");
 
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -729,7 +729,7 @@ export async function buildKudePdfBuffer(input: BuildKudePdfInput): Promise<Buff
     leg += legendLead;
   }
   leg += 2;
-  page.drawText("Generado con Instemaq ERP", {
+  page.drawText("Generado con FLUX Nutrition ERP", {
     x: margin + footPad,
     y: baselineFromTop(page, leg),
     size: 6.5,

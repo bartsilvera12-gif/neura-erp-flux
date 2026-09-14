@@ -127,7 +127,7 @@ export default function Header() {
             >
               <Image
                 src="/brand/instemaq-logo.jpeg"
-                alt="Instemaq"
+                alt="FLUX Nutrition"
                 width={72}
                 height={72}
                 className="h-full w-full object-cover"

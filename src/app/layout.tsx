@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Instemaq ERP",
-  description: "Sistema de gestión empresarial de Instemaq",
+  title: "FLUX Nutrition ERP",
+  description: "Sistema de gestión empresarial de FLUX Nutrition",
 };
 
 export default function RootLayout({
