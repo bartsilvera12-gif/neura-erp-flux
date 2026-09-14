@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,9 +10,6 @@ import {
   Package,
   Users,
   FileText,
-  // Settings, // usado por el ítem "Configuración" (oculto del sidebar, acceso solo por URL)
-  UserCog,
-  Building2,
   ChevronDown,
   ChevronRight,
   ChevronLeft,
@@ -22,19 +18,13 @@ import {
   Search,
   Receipt,
   Megaphone,
-  Ticket,
-  SendHorizontal,
   MessageCircle,
   ScrollText,
   Percent,
-  ChefHat,
-  Utensils,
   BarChart3,
   Wallet,
   Banknote,
   Truck,
-  // Inbox, // usado por el ítem "Recepción" (oculto)
-  ReceiptText,
 } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { fetchWithSupabaseSession } from "@/lib/api/fetch-with-supabase-session";
@@ -79,79 +69,30 @@ function menuItemMatchesQuery(item: MenuItem, queryRaw: string): boolean {
   return item.children?.some((c) => normalizeMenuSearch(c.label).includes(q)) ?? false;
 }
 
-function adminEmpresasMatchesQuery(queryRaw: string): boolean {
-  const q = normalizeMenuSearch(queryRaw);
-  if (!q) return true;
-  const label = normalizeMenuSearch("Admin Empresas");
-  return label.includes(q) || normalizeMenuSearch("empresas").includes(q);
-}
-
+// Menú custom FLUX Nutrition: solo los 20 módulos pedidos, en el orden solicitado.
+// Los que no tienen página propia en el codebase (Tableros, Gerencia, Contabilidad)
+// apuntan a /proximamente con un querystring que identifica el módulo.
 const MENU_STRUCTURE: MenuItem[] = [
   { key: "dashboard", slug: "dashboard", label: "Dashboard", href: "/", icon: LayoutDashboard },
-  // Omnicanal: la visibilidad real la decide empresa_modulos (canAccessSidebarSlug).
-  {
-    key: "conversaciones", slug: "conversaciones", label: "Conversaciones",
-    href: "/dashboard/conversaciones", icon: MessageCircle,
-  },
+  { key: "tableros", slug: "tableros", label: "Tableros", href: "/proximamente?m=tableros", icon: LayoutDashboard },
+  { key: "gerencia", slug: "gerencia", label: "Gerencia", href: "/proximamente?m=gerencia", icon: BarChart3 },
   { key: "ventas", slug: "ventas", label: "Ventas", href: "/ventas", icon: ShoppingCart },
-  { key: "inventario", slug: "inventario", label: "Inventario", href: "/inventario", icon: Package, children: [
-    { label: "Productos", href: "/inventario" },
-    { label: "Movimientos", href: "/inventario/movimientos" },
-    { label: "Categorías", href: "/inventario/categorias" },
-    // "Depósitos / Ubicaciones" OCULTO (pedido del negocio: una sola sucursal, se
-    // trabaja con el depósito original y nada más). Para reactivar: descomentar
-    // esta línea y quitar el guard de src/app/inventario/ubicaciones/page.tsx.
-    // { label: "Depósitos / Ubicaciones", href: "/inventario/ubicaciones" },
-  ]},
   { key: "clientes", slug: "clientes", label: "Clientes", href: "/clientes", icon: Users },
   { key: "gestion-clientes", slug: "gestion-clientes", label: "Gestión Clientes", href: "/gestion-clientes", icon: Users },
-  {
-    key: "compras",
-    slug: "compras",
-    label: "Compras",
-    href: "/compras",
-    icon: Package,
-    children: [
-      { label: "Compras", href: "/compras", exactMatch: true },
-      { label: "Órdenes de compra", href: "/compras/ordenes" },
-      { label: "Proveedores", href: "/proveedores" },
-    ],
-  },
-  // Remisión y Recepción son módulos independientes: emitir vs recibir mercadería.
-  { key: "remision", slug: "remision", label: "Remisión", href: "/notas-remision", icon: Truck },
-  // Recepción OCULTA de la interfaz (pedido del negocio: una sola sucursal, no se
-  // usa el circuito de recibir mercadería). Para reactivar: descomentar esta línea,
-  // el import de `Inbox`, la key "recepcion" en MENU_FAMILIES y quitar el guard de
-  // src/app/recepcion/page.tsx.
-  // { key: "recepcion", slug: "recepcion", label: "Recepción", href: "/recepcion", icon: Inbox },
-  { key: "presupuestos", slug: "presupuestos", label: "Presupuestos", href: "/presupuestos", icon: FileText },
+  { key: "crm", slug: "crm", label: "CRM Funnel", href: "/crm", icon: Sparkles },
+  { key: "inventario", slug: "inventario", label: "Inventario", href: "/inventario", icon: Package },
+  { key: "movimientos", slug: "inventario", label: "Movimientos", href: "/inventario/movimientos", icon: Truck },
   { key: "gastos", slug: "gastos", label: "Gastos", href: "/gastos", icon: Receipt },
-  // Recibos de dinero: comprobante interno de dinero recibido (no fiscal).
-  { key: "recibos", slug: "recibos", label: "Recibos", href: "/recibos", icon: ReceiptText },
-  {
-    key: "notas_credito", slug: "notas_credito", label: "Notas de crédito",
-    href: "/notas-credito", icon: ScrollText,
-  },
-  // Reportes: vistas consolidadas (facturas, etc.). Acceso por empresa_modulos slug "reportes".
+  { key: "cobros", slug: "cobros", label: "Cobranzas", href: "/pagos", icon: Banknote },
+  { key: "pagos", slug: "pagos", label: "Pagos", href: "/proximamente?m=pagos", icon: Wallet },
+  { key: "notas_credito", slug: "notas_credito", label: "Nota de crédito", href: "/notas-credito", icon: ScrollText },
+  { key: "comisiones", slug: "comisiones", label: "Comisiones", href: "/comisiones", icon: Percent },
+  { key: "contabilidad", slug: "contabilidad", label: "Contabilidad", href: "/proximamente?m=contabilidad", icon: FileText },
   { key: "reportes", slug: "reportes", label: "Reportes", href: "/reportes", icon: BarChart3 },
-  // Sistema: el acceso lo decide empresa_modulos; si el módulo no está habilitado, no se muestra.
-  { key: "usuarios", slug: "usuarios", label: "Usuarios", href: "/usuarios", icon: UserCog },
-  // Configuración OCULTA del sidebar (pedido del negocio: se accede SOLO por URL,
-  // navegando manualmente a /configuracion). El acceso por URL sigue funcionando
-  // vía AuthGuard (superadmin o módulo `configuracion` habilitado); esto solo saca
-  // el ítem del menú lateral. Para reactivar en el sidebar: descomentar este bloque
-  // y volver a agregar la key "configuracion" en MENU_FAMILIES → "administracion".
-  // {
-  //   key: "configuracion",
-  //   slug: "configuracion",
-  //   label: "Configuración",
-  //   href: "/configuracion",
-  //   icon: Settings,
-  //   children: [
-  //     { label: "Facturación", href: "/configuracion/facturacion" },
-  //     { label: "Equipos y supervisión", href: "/configuracion/omnicanal-equipos" },
-  //   ],
-  // },
+  { key: "campanas", slug: "campanas", label: "Campañas WhatsApp", href: "/dashboard/campanas", icon: Megaphone },
+  { key: "conversaciones", slug: "conversaciones", label: "Conversaciones", href: "/dashboard/conversaciones", icon: MessageCircle },
+  { key: "conversaciones-finalizadas", slug: "conversaciones-finalizadas", label: "Conversaciones finalizadas", href: "/dashboard/conversaciones-finalizadas", icon: MessageCircle },
+  { key: "historial-omnicanal", slug: "historial-omnicanal", label: "Historial omnicanal", href: "/dashboard/historial-omnicanal", icon: ScrollText },
 ];
 
 /**
@@ -160,14 +101,12 @@ const MENU_STRUCTURE: MenuItem[] = [
  * `MenuItem.key`. Los ítems sin familia caen en "Otros" (no se ocultan).
  */
 const MENU_FAMILIES: { id: string; titulo: string; keys: string[] }[] = [
-  { id: "inicio", titulo: "Inicio", keys: ["dashboard"] },
-  { id: "comercial", titulo: "Comercial", keys: ["clientes", "gestion-clientes", "ventas", "presupuestos"] },
-  { id: "finanzas", titulo: "Finanzas", keys: ["recibos", "gastos", "notas_credito"] },
-  { id: "operaciones", titulo: "Operaciones", keys: ["inventario", "compras", "remision"] },
-  { id: "omnicanal", titulo: "Omnicanal", keys: ["conversaciones"] },
+  { id: "inicio", titulo: "Inicio", keys: ["dashboard", "tableros", "gerencia"] },
+  { id: "comercial", titulo: "Comercial", keys: ["ventas", "clientes", "gestion-clientes", "crm"] },
+  { id: "operaciones", titulo: "Operaciones", keys: ["inventario", "movimientos"] },
+  { id: "finanzas", titulo: "Finanzas", keys: ["gastos", "cobros", "pagos", "notas_credito", "comisiones", "contabilidad"] },
   { id: "reportes", titulo: "Reportes", keys: ["reportes"] },
-  // "configuracion" se dejó fuera a propósito: es accesible solo por URL, no en el sidebar.
-  { id: "administracion", titulo: "Administración", keys: ["usuarios"] },
+  { id: "omnicanal", titulo: "Omnicanal", keys: ["campanas", "conversaciones", "conversaciones-finalizadas", "historial-omnicanal"] },
 ];
 
 function modulosSyntheticFromMenu(): ModuloEmpresa[] {
@@ -586,8 +525,7 @@ export default function Sidebar() {
 
   const anyMenuVisible =
     favoritosItemsFiltered.length > 0 ||
-    mainItemsFiltered.length > 0 ||
-    (esSuperAdmin && adminEmpresasMatchesQuery(menuSearchQuery));
+    mainItemsFiltered.length > 0;
 
   const showMenuNoResults =
     !cargando && normalizeMenuSearch(menuSearchQuery).length > 0 && !anyMenuVisible;
@@ -651,26 +589,22 @@ export default function Sidebar() {
             : "fixed inset-y-0 left-0 z-50 -translate-x-full lg:translate-x-0 transition-transform duration-200"
         }`}
       >
-      {/* Logo: dos assets distintos segun estado.
-          - Expandido: /brand/zentra-logo-official.png (logo + texto ZENTRA)
-          - Colapsado: /brand/zentralogo.png (solo icono Z) -> queda nitido en 44x44
-          Header con justify-center porque el toggle ahora es una pestania
-          flotante en el borde derecho (estilo Coolify/acai-house). */}
+      {/* Header FLUX Nutrition — texto puro (sin logo Zentra). Cuando se suba el
+          logo oficial de FLUX, reemplazar por un <Image src="/brand/flux-logo.png" />. */}
       <div className="flex h-[7.25rem] shrink-0 items-center justify-center gap-2 border-b border-[color:var(--zentra-sidebar-border)] bg-[color:var(--zentra-sidebar-elevated)]/35 px-3 py-2.5">
         <Link href="/" className="flex items-center justify-center min-w-0 flex-1 overflow-hidden">
-          <div
-            className={`relative flex items-center justify-center ${collapsed ? "h-11 w-11" : "h-[4.5rem] w-full max-w-[200px]"}`}
-          >
-            <Image
-              src={collapsed ? "/brand/zentralogo.png" : "/brand/zentra-logo-official.png"}
-              alt="ZENTRA"
-              width={400}
-              height={220}
-              sizes={collapsed ? "44px" : "200px"}
-              className="h-full w-full object-contain object-center"
-              priority
-            />
-          </div>
+          {collapsed ? (
+            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#4FAEB2] text-xl font-black text-white shadow-md">
+              F
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center leading-tight">
+              <span className="text-lg font-black tracking-[0.18em] text-white">FLUX</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#4FAEB2]">
+                Nutrition
+              </span>
+            </div>
+          )}
         </Link>
       </div>
 
@@ -801,25 +735,7 @@ export default function Sidebar() {
           })
         )}
 
-        {/* Admin */}
-        {esSuperAdmin && adminEmpresasMatchesQuery(menuSearchQuery) && (
-          <div className="mt-6 pt-4 border-t border-[color:var(--zentra-sidebar-border)]">
-            {!collapsed && (
-              <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Admin</p>
-            )}
-            <Link
-              href="/admin/empresas"
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
-                (pathname ?? "").startsWith("/admin/empresas")
-                  ? "bg-[color:var(--zentra-sidebar-active)] text-amber-100 shadow-[inset_3px_0_0_var(--zentra-sidebar-accent)]"
-                  : "text-amber-300/95 hover:bg-[color:var(--zentra-sidebar-hover)]"
-              }`}
-            >
-              <Building2 className="h-5 w-5 shrink-0" />
-              {!collapsed && <span className="truncate">Admin Empresas</span>}
-            </Link>
-          </div>
-        )}
+        {/* Sección Admin Empresas removida en FLUX Nutrition (single-tenant). */}
         </div>
       </nav>
 
