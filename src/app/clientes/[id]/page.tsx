@@ -85,9 +85,9 @@ type TabId = "informacion" | "estado_cuenta" | "suscripciones" | "marketing" | "
 const TABS: { id: TabId; label: string; showWhen?: (c: Cliente) => boolean }[] = [
   { id: "informacion",   label: "Información"      },
   { id: "estado_cuenta", label: "Estado de cuenta" },
-  { id: "suscripciones", label: "Suscripciones"    },
+  // Tabs "Suscripciones" y "Proyectos" ocultos en FLUX Nutrition (no aplican al
+  // negocio). La logica y datos siguen intactos; solo se saca la pestaña visible.
   { id: "marketing",     label: "Marketing",        showWhen: (c) => c.tipo_servicio_cliente === "marketing" },
-  { id: "proyectos",     label: "Proyectos"         },
   { id: "actividad",     label: "Actividad"         },
   { id: "notas",         label: "Notas"             },
 ];
@@ -952,7 +952,7 @@ export default function ClienteDetailPage() {
 
       {/* ── Panel resumen ─────────────────────────────────────────────────── */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="bg-gradient-to-r from-[#0284C7] to-[#0C4A6E] px-6 py-5">
+        <div className="bg-gradient-to-r from-[#4FAEB2] to-[#2F6E71] px-6 py-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
               {/* Avatar */}
@@ -1067,29 +1067,12 @@ export default function ClienteDetailPage() {
           </div>
         </div>
 
-        {/* Estadísticas rápidas */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 divide-x divide-gray-100 border-t border-gray-100">
+        {/* Estadísticas rápidas — "Tipo servicio" y "Plan activo" ocultos en FLUX */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-x divide-gray-100 border-t border-gray-100">
           {(
             [
               { label: "Origen", value: cliente.origen },
-              {
-                label: "Tipo servicio",
-                value: etiquetaVisibleTipoServicio(
-                  cliente.tipo_servicio_cliente ?? null,
-                  labelTipoServicioMap
-                ),
-              },
               { label: "Condición", value: cliente.condicion_pago ?? "—" },
-              {
-                label: "Plan activo",
-                value: cargandoDetalleCliente ? (
-                  <span className="inline-block h-4 w-36 max-w-full animate-pulse rounded-md bg-slate-200" aria-hidden />
-                ) : suscripcionActiva ? (
-                  `${planes.find((p) => p.id === suscripcionActiva.plan_id)?.nombre ?? suscripcionActiva.plan_nombre ?? "Plan"} (${suscripcionActiva.moneda})`
-                ) : (
-                  "—"
-                ),
-              },
               { label: "Moneda", value: cliente.moneda_preferida ?? "GS" },
               {
                 label: "Vendedor",
